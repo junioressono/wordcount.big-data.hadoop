@@ -1,0 +1,22 @@
+version: "3.1"
+
+services:
+  hadoop-standalone-main:
+    build:
+      context: .
+      dockerfile: docker.standalone.Dockerfile
+    image: hadoop-standalone-main:1.0
+    container_name: hadoop-standalone-main
+    hostname: hadoop-standalone-main
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - ./.env
+    ports:
+      #- "50070:50070"
+      - "8088:8088"
+      #- "9870:9870"
+    networks:
+      - hadoop
+networks:
+  hadoop:
