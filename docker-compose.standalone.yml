@@ -12,6 +12,9 @@ services:
     tty: true
     env_file:
       - ./.env
+    volumes:
+      - ./data/inputs:/root/data/inputs
+      - ./data/outputs:/root/data/outputs
     ports:
       #- "50070:50070"
       - "8088:8088"
