@@ -5,7 +5,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
+public class TokenizerMapper extends Mapper<Object, Text, IntWritable, Text> {
 
     private Text word = new Text();
     private final static IntWritable one = new IntWritable(1);
@@ -15,7 +15,8 @@ public class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
         StringTokenizer entry = new StringTokenizer(value.toString());
         while (entry.hasMoreTokens()) {
             word.set(entry.nextToken());
-            context.write(word, one);
+            System.out.println(word);
+            context.write(one, word);
         }
     }
 }

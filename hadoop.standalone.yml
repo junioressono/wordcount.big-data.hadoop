@@ -4,7 +4,7 @@ services:
   hadoop-standalone-main:
     build:
       context: .
-      dockerfile: docker.standalone.Dockerfile
+      dockerfile: hadoop.standalone.Dockerfile
     image: hadoop-standalone-main:1.0
     container_name: hadoop-standalone-main
     hostname: hadoop-standalone-main
