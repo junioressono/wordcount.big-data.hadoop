@@ -18,3 +18,5 @@ ENV SPARK_HOME=/usr/local/spark
 ENV PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 
 CMD [ "sh", "-c", "start-master.sh; bash" ]
+
+# /root/data/io/inputs/loremipsum.txt

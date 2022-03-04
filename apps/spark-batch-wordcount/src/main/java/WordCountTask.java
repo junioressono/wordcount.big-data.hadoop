@@ -18,24 +18,36 @@ public class WordCountTask {
 
     private void run(String inputFilePath, String outputDir) {
         SparkConf conf = new SparkConf()
-                .setAppName(WordCountTask.class.getName())
-                .setMaster("local[*]");
+                .setAppName(WordCountTask.class.getName());
+                //.setMaster("local[*]");
         JavaSparkContext spark = new JavaSparkContext(conf);
 
-        JavaRDD<String> docs = spark.textFile(inputFilePath);
+        String linesSeparators = "\t";
 
-        JavaRDD<String> low = docs.map(line -> line.toLowerCase());
-        JavaRDD<String>  words = docs.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
-        JavaPairRDD<String, Integer> counts = words.mapToPair(word -> new Tuple2<>(word, 1));
+        JavaRDD<String> doc_lines = spark.textFile(inputFilePath);
+        JavaRDD<String> doc_lower_lines = doc_lines.map(line -> line.toLowerCase());
 
-        JavaPairRDD<String, Integer> words_frequence = counts.reduceByKey((a, b) -> a + b);
+        JavaRDD<String>  words = doc_lower_lines.flatMap(line -> Arrays.asList(line.split(linesSeparators)).iterator());
+        JavaPairRDD<String, Integer> words_map = words.mapToPair(word -> new Tuple2<>(word, 1));
 
-//        Comparable<> result = words_frequence.top(2);
-//
-//        for (Object item : result) {
-//            System.out.println(item.toString());
-//        }
+        JavaPairRDD<String, Integer> words_count = words_map.reduceByKey((a, b) -> a + b);
+        JavaPairRDD<Integer, String> words_swapped = words_count.mapToPair(t -> new Tuple2<>(t._2, t._1));
+        JavaPairRDD<Integer, String> words_sorted = words_swapped.sortByKey(false);
 
-        words_frequence.saveAsTextFile(outputDir);
+        words_sorted
+                .mapToPair(t -> new Tuple2<>(t._2, t._1))
+                .saveAsTextFile(outputDir);
+
+        List<Tuple2<Integer, String>> result_take = words_sorted.take(2);
+        System.out.println("RESULT TAKE");
+        for (Object item : result_take) {
+            System.out.println(item.toString());
+        }
+
+        /*List<Tuple2<Integer, String>> result_top = words_swapped.top(2);
+        System.out.println("RESULT TOP");
+        for (Object item : result_top) {
+            System.out.println(item.toString());
+        }*/
     }
 }

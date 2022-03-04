@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.8"
 
 services:
   spark-standalone-main:
@@ -14,6 +14,7 @@ services:
       - ./.env
     volumes:
       - ./data/io:/root/data/io
+      - ./apps:/root/apps
     ports:
       - "9201:8080"
     networks:
