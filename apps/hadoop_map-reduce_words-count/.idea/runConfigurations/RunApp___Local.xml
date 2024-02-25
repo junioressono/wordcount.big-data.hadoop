@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunApp - Local" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="WordCount" />
+    <module name="hadoop_mapreduce_words_count" />
+    <option name="PROGRAM_PARAMETERS" value="src/main/resources/input/test.txt src/main/resources/output/result" />
+    <method v="2" />
+  </configuration>
+</component>

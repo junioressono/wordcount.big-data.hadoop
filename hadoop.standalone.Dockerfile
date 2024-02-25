@@ -15,22 +15,25 @@ RUN  ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
      chmod 0600 ~/.ssh/authorized_keys
 
 WORKDIR /root
-COPY ./data/hadoop/hadoop-3.3.1-aarch64.tar.gz .
-#RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1-aarch64.tar.gz
-RUN tar -xzvf hadoop-3.3.1-aarch64.tar.gz && \
-    mv hadoop-3.3.1 /usr/local/hadoop && \
-    rm hadoop-3.3.1-aarch64.tar.gz
+COPY ./data/hadoop/hadoop-3.3.6-aarch64.tar.gz .
+#RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.1-aarch64.tar.gz
+RUN tar -xzvf hadoop-3.3.6-aarch64.tar.gz && \
+    mv hadoop-3.3.6 /usr/local/hadoop && \
+    rm hadoop-3.3.6-aarch64.tar.gz
 
-COPY ./data/spark/spark-3.2.1-bin-hadoop3.2.tgz .
+# COPY ./data/spark/spark-3.2.1-bin-hadoop3.2.tgz .
 #RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1-aarch64.tar.gz
-RUN tar -xzvf spark-3.2.1-bin-hadoop3.2.tgz && \
-    mv spark-3.2.1-bin-hadoop3.2 /usr/local/spark && \
-    rm spark-3.2.1-bin-hadoop3.2.tgz
+# RUN tar -xzvf spark-3.2.1-bin-hadoop3.2.tgz && \
+#     mv spark-3.2.1-bin-hadoop3.2 /usr/local/spark && \
+#     rm spark-3.2.1-bin-hadoop3.2.tgz
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
 ENV HADOOP_HOME=/usr/local/hadoop
-ENV SPARK_HOME=/usr/local/spark
-ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/spark/bin
+# ENV SPARK_HOME=/usr/local/spark
+ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin
+# ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/spark/bin
+
+RUN java -version
 
 # To use the root account to start and stop Hadoop services
 COPY config/hadoop/hdfs-users.txt .
@@ -45,7 +48,7 @@ RUN echo "ToFix ERRORs & WARNs" && \
     rm -f ~/*-users.txt && \
     \
     # tofix ERROR:
-    sed -i -E '/JAVA_HOME+/a JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
+    sed -i -E '/JAVA_HOME+/a JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64' $HADOOP_HOME/etc/hadoop/hadoop-env.sh && \
     \
     # tofix ERROR: Cannot set priority of datanode process  \
     # https://blog.titanwolf.in/a?ID=01000-5b05054c-3e55-4d7e-81ff-d4d67ea5ed9b)
@@ -70,10 +73,6 @@ RUN mkdir -p ~/hdfs/namenode && \
 # Format namenode
 RUN $HADOOP_HOME/bin/hdfs namenode -format
 
-# Setup passphraseless ssh
-#COPY data/.ssh/hadoop_labs.junioressono.space.pub ./id.pub
-#RUN  cat ~/id.pub >> ~/.ssh/authorized_keys && \
-#     rm -f ~/*.pub
 
 COPY apps/**/target/*.jar ./apps/target/
 #RUN apt-get update && apt-get install -y vim
